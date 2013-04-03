@@ -1,77 +1,86 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+<!--[if lt IE 7]>      <html class='no-js lt-ie9 lt-ie8 lt-ie7'> <![endif]-->
+<!--[if IE 7]>         <html class='no-js lt-ie9 lt-ie8'> <![endif]-->
+<!--[if IE 8]>         <html class='no-js lt-ie9'> <![endif]-->
+<!--[if gt IE 8]><!--> <html class='no-js'> <!--<![endif]-->
 	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-		<title></title>
-		<meta name="description" content="">
-		<meta name="viewport" content="width=device-width">
-		<link rel="stylesheet" href="assets/css/normalize.css">
-		<link rel="stylesheet" href="assets/css/app.css">
-		<script src="assets/js/vendor/modernizr-2.6.2.min.js"></script>
+		<meta charset='utf-8'>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+		<title>Kinect Parallax Prototype</title>
+		<meta name='keywords' content='Kinect, Parallax, JavaScript, xBox Kinect, Kinect for windows'>
+		<meta name='description' content='A JavaScript parallax effect prototype based on Kinect events, using Zigfu library.'>
+		<meta name='author' content='Florent SCHILDKNECHT'>
+		<meta name='viewport' content='width=device-width'>
+		<link rel='stylesheet' href='assets/css/normalize.css'>
+		<link rel='stylesheet' href='assets/css/jquery.kinect-parallax-1.0.0.min.css'>
+		<link rel='stylesheet' href='assets/css/app.min.css'>
+		<script src='assets/js/vendor/modernizr-2.6.2.min.js'></script>
 	</head>
 	<body>
-		<div class="parallax-viewport" id="parallax">
-			<!-- parallax layers -->
-			<div class="parallax-layer" style="width:860px; height:273px;">
-				<img src="assets/images/0_sun.png" alt="" style="position:absolute; left:300px; top:-12px;">
+		<header id='app-header'>
+			<h1 id='app-name'>Kinect-based Parallax Prototype</h1>
+		</header>
+		<div id='kinect-parallax' class='kinect-parallax-viewport'>
+			<div id='kinect-parallax-layer-1' class='kinect-parallax-layer'>
+				<img src='assets/images/0_sun.png' alt='Sun'>
 			</div>
-			<div class="parallax-layer" style="width:920px; height:274px;">
-				<img src="assets/images/1_mountains.png" alt="">
+			<div id='kinect-parallax-layer-2' class='kinect-parallax-layer'>
+				<img src='assets/images/1_mountains.png' alt='Moutains'>
 			</div>
-			<div class="parallax-layer" style="width:1100px; height:284px;">
-				<img src="assets/images/2_hill.png" alt="" style="position:absolute; top:40px; left:0;">
+			<div id='kinect-parallax-layer-3' class='kinect-parallax-layer'>
+				<img src='assets/images/2_hill.png' alt='Hill'>
 			</div>
-			<div class="parallax-layer" style="width:1360px; height:320px;">
-				<img src="assets/images/3_wood.png" alt="" style="position:absolute; top:96px; left:0;">
+			<div id='kinect-parallax-layer-4' class='kinect-parallax-layer'>
+				<img src='assets/images/3_wood.png' alt='Wood'>
 			</div>
 		</div>
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-		<script>window.jQuery || document.write('<script src="assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
-		<script src="assets/js/plugins.js"></script>
-		<script src="assets/js/vendor/jquery.kinect-parallax-2.js"></script>
+		<div id='debug'>
+			<div>Kinect Position X: <span id='kinect-x'>0</span></div>
+			<div>Kinect Position Y: <span id='kinect-y'>0</span></div>
+			<div>Kinect Position Z: <span id='kinect-z'>0</span></div>
+		</div>
+		<script src='http://code.jquery.com/jquery-latest.min.js'></script>
+		<script>window.jQuery || document.write('<script src=\'assets/js/vendor/jquery-1.9.1.min.js\'><\/script>')</script>
+		<script src='assets/js/vendor/jquery.kinect-parallax.js'></script>
+		<script src='assets/js/plugins.js'></script>
+		<script src='assets/js/vendor/zigfu.min.js'></script>
+		<script src='assets/js/app.js'></script>
 		<script>
 			jQuery(document).ready(function() {
-				var $parallax = jQuery('#parallax .parallax-layer').KinectParallax('init', {
-					//mouseport: jQuery('#parallax')
+				var $viewport = jQuery('#kinect-parallax'),
+					$layers = jQuery('#kinect-parallax .kinect-parallax-layer').KinectParallax('init', {
+					'viewport': $viewport,
+					'axisXAllowed': true,
+					'axisYAllowed': false,
+					'axisZ': 100
 				});
-				console.log($parallax);
 				jQuery(this).on('headstart', function (e) {
-					console.log('start received', e);
-					$parallax.KinectParallax('start');
+					$layers.KinectParallax('start');
 				});
 				jQuery(this).on('headstop', function (e) {
-					console.log('stop received', e);
-					$parallax.KinectParallax('stop');
+					$layers.KinectParallax('stop');
 				});
 				jQuery(this).on('headmove', function (e, position) {
-					$parallax.KinectParallax('move', position);
+					$layers.KinectParallax('move', position);
 				});
+				/*
+				$viewport.on('mouseenter', function (e) {
+					console.log('mouseenter');
+					$layers.KinectParallax('start');
+				});
+				$viewport.on('mouseleave', function (e) {
+					console.log('mouseleave');
+					$layers.KinectParallax('stop');
+				});
+				$viewport.on('mousemove', function (e) {
+					console.log('mousemove');
+					$layers.KinectParallax('move', {
+						'x': e.pageX,
+						'y': e.pageY
+					});
+				});
+				*/
 			});
 		</script>
-		<script src='http://cdn.zigfu.com/zigjs/zig.min.js'></script>
-		<script src="assets/js/app.js"></script>
-		<!--
-		<script src="assets/js/vendor/jquery.event.frame.js"></script>
-		<script src="assets/js/vendor/jquery.parallax-2.0.js"></script>
-		<script src="assets/js/app.js"></script>
-		<script>
-			jQuery(document).ready(function() {
-				jQuery('#parallax .parallax-layer').parallax({
-					mouseport: jQuery('#parallax')
-				});
-			});
-		</script>
-		Google Analytics: change UA-XXXXX-X to be your site's ID.
-		<script>
-			var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
-			(function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-			g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
-			s.parentNode.insertBefore(g,s)}(document,'script'));
-		</script>
-		-->
 	</body>
 </html>
