@@ -35,18 +35,17 @@
 							y = $data.coords.y,
 							css;
 						if (typeof position === 'object' && position.x && position.y) {
-							x = ($data.axisXAllowed ? - ((position.x * $data.movement.axisZ) - $data.movement.minLeft / 2) : x);
-							y = ($data.axisYAllowed ? ((position.y - $data.cameraInit.y) * (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ) : y);
-							console.log('Relative Y position', position.y - $data.cameraInit.y, 'Rapport axisZ', (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ, 'top value', y);
+							x = ($data.axisXAllowed ? $data.init.left - (position.x * $data.movement.axisZ) : x);
+							y = ($data.axisYAllowed ? $data.init.top + (position.y * $data.movement.axisZ) * (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ : y);
 						} else if (typeof position === 'array' && position[0] && position[1]) {
-							x = ($data.axisXAllowed ? - ((position[0] * $data.movement.axisZ) - $data.movement.minLeft / 2) : x);
-							y = ($data.axisYAllowed ? $data.init.top - ((position[1] * $data.movement.axisZ) - $data.movement.minTop / 2) : y);
+							x = ($data.axisXAllowed ? $data.init.left - (position[0] * $data.movement.axisZ) : x);
+							y = ($data.axisYAllowed ? $data.init.top + (position[1] * $data.movement.axisZ) * (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ : y);
 						} else if (debug) {
 							console.log('Unable to set the new position: ', position);
 						}
 						$data.coords = {
-							'x': Math.min(Math.max(x, $data.movement.minLeft), 0),
-							'y': Math.max(y, $data.movement.minTop)//Math.min(Math.max(y, $data.movement.minTop), 0)
+							'x': Math.min(Math.max(x, $data.movement.minLeft), $data.movement.maxLeft),
+							'y': Math.min(Math.max(y, $data.movement.minTop), $data.movement.maxTop),
 						};
 						css = {
 							'left': $data.coords.x,
@@ -59,12 +58,18 @@
 			init: function(options) {
 				var options = $.extend({}, $.fn.KinectParallax.options, options);
 				return this.each(function() {
-					var layerWidth = parseInt($(this).outerWidth()),
-						layerHeight = parseInt($(this).outerHeight()),
-						minLeft = - (layerWidth - parseInt(options.viewport.outerWidth())),
-						minTop = layerHeight - parseInt(options.viewport.outerHeight()),
-						axisZ = parseInt($(this).css('z-index')) / options.axisZ;
-					$node = $(this);
+					var $node = $(this),
+						layerWidth = parseInt($node.outerWidth()),
+						layerHeight = parseInt($node.outerHeight()),
+						diffTop = parseInt(options.viewport.outerHeight()) - layerHeight,
+						diffLeft = parseInt(options.viewport.outerWidth()) - layerWidth,
+						minLeft = Math.min(diffLeft, 0),
+						maxLeft = Math.max(diffLeft, 0),
+						minTop = Math.min(diffTop, 0),
+						maxTop = Math.max(diffTop, 0),
+						initialPosition = $node.position(),
+						axisZ = parseInt($node.css('z-index')) / options.axisZ;
+
 					$node.data('KinectParallax', {
 						'target' : $node,
 						'layerWidth': layerWidth,
@@ -75,17 +80,19 @@
 						'axisZ': options.axisZ,
 						'version': '0.0.1',
 						'coords': {
-							'x': $node.position().left,
-							'y': $node.position().top
+							'x': initialPosition.left,
+							'y': initialPosition.top
 						},
 						'movement': {
 							'minLeft': minLeft,
+							'maxLeft': maxLeft,
 							'minTop': minTop,
+							'maxTop': maxTop,
 							'axisZ': axisZ,
 						},
 						'init': {
-							'left': $node.position().left,
-							'top': $node.position().top,
+							'left': initialPosition.left,
+							'top': initialPosition.top,
 							'zIndex': $node.css('z-index')
 						},
 						'cameraInit': {
@@ -100,9 +107,9 @@
 		};
 	$.fn.KinectParallax = function (method) {
 		if (KPmethods[method]) {
-			return KPmethods[method].apply( this, Array.prototype.slice.call( arguments, 1 ));
+			return KPmethods[method].apply(this, Array.prototype.slice.call(arguments, 1));
 		} else if (typeof method === 'object' || !method) {
-			return KPmethods.init.apply( this, arguments );
+			return KPmethods.init.apply(this, arguments);
 		} else {
 			$.error('Method ' +  method + ' does not exist on jQuery.KinectParallax');
 		}
