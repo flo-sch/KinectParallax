@@ -10,14 +10,20 @@ jQuery(document).on('ready', function () {
 			$kinectZ = jQuery('#kinect-z');
 			
 		engager.addEventListener('userengaged', function(user) {
-			$doc.trigger('headstart');
+			console.log('user engaged', user);
+			posx = user.skeleton[zig.Joint.Head].position[0];
+			posy = user.skeleton[zig.Joint.Head].position[1];
+			posz = user.skeleton[zig.Joint.Head].position[2];
+			$doc.trigger('headstart', {
+				'x': posx,
+				'y': posy,
+				'z': posz
+			});
 
 			user.addEventListener('userupdate', function(user) {
 				posx = user.skeleton[zig.Joint.Head].position[0];
 				posy = user.skeleton[zig.Joint.Head].position[1];
 				posz = user.skeleton[zig.Joint.Head].position[2];
-				//console.log(user.id, posx, posy, posz);
-				// Update parallax layers there
 				$kinectX.text(posx);
 				$kinectY.text(posy);
 				$kinectZ.text(posz);

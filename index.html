@@ -51,11 +51,11 @@
 					$layers = jQuery('#kinect-parallax .kinect-parallax-layer').KinectParallax('init', {
 					'viewport': $viewport,
 					'axisXAllowed': true,
-					'axisYAllowed': false,
+					'axisYAllowed': true,
 					'axisZ': 100
 				});
-				jQuery(this).on('headstart', function (e) {
-					$layers.KinectParallax('start');
+				jQuery(this).on('headstart', function (e, position) {
+					$layers.KinectParallax('start', position);
 				});
 				jQuery(this).on('headstop', function (e) {
 					$layers.KinectParallax('stop');

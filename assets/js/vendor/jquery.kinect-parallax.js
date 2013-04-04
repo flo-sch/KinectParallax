@@ -7,10 +7,16 @@
 			'axisZ': 100
 		},
 		KPmethods = {
-			start: function () {
+			start: function (position) {
 				return this.each(function () {
 					var $data = $(this).data('KinectParallax');
 					$data.bind = true;
+					$data.cameraInit = {
+						'x': position.x,
+						'y': position.y,
+						'z': position.z
+					}
+					console.log('INIT Y', position.y, $data.movement.minTop);
 					$(this).data('KinectParallax', $data);
 				})
 			},
@@ -30,16 +36,17 @@
 							css;
 						if (typeof position === 'object' && position.x && position.y) {
 							x = ($data.axisXAllowed ? - ((position.x * $data.movement.axisZ) - $data.movement.minLeft / 2) : x);
-							y = ($data.axisYAllowed ? - ((position.y * $data.movement.axisZ) - $data.movement.minTop / 2) : y);
+							y = ($data.axisYAllowed ? ((position.y - $data.cameraInit.y) * (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ) : y);
+							console.log('Relative Y position', position.y - $data.cameraInit.y, 'Rapport axisZ', (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ, 'top value', y);
 						} else if (typeof position === 'array' && position[0] && position[1]) {
 							x = ($data.axisXAllowed ? - ((position[0] * $data.movement.axisZ) - $data.movement.minLeft / 2) : x);
-							y = ($data.axisYAllowed ? - ((position[1] * $data.movement.axisZ) - $data.movement.minTop / 2) : y);
+							y = ($data.axisYAllowed ? $data.init.top - ((position[1] * $data.movement.axisZ) - $data.movement.minTop / 2) : y);
 						} else if (debug) {
 							console.log('Unable to set the new position: ', position);
 						}
 						$data.coords = {
 							'x': Math.min(Math.max(x, $data.movement.minLeft), 0),
-							'y': Math.min(Math.max(y, $data.movement.minTop), 0)
+							'y': Math.max(y, $data.movement.minTop)//Math.min(Math.max(y, $data.movement.minTop), 0)
 						};
 						css = {
 							'left': $data.coords.x,
@@ -68,17 +75,26 @@
 						'axisZ': options.axisZ,
 						'version': '0.0.1',
 						'coords': {
-							'x': $node.offset().left,
-							'y': $node.offset().top
+							'x': $node.position().left,
+							'y': $node.position().top
 						},
 						'movement': {
 							'minLeft': minLeft,
 							'minTop': minTop,
 							'axisZ': axisZ,
 						},
+						'init': {
+							'left': $node.position().left,
+							'top': $node.position().top,
+							'zIndex': $node.css('z-index')
+						},
+						'cameraInit': {
+							'x': null,
+							'y': null,
+							'z': null
+						},
 						'bind': false
 	           		});
-					console.log($node.data('KinectParallax'));
 				});
 			}
 		};
