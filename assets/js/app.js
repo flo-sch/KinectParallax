@@ -124,35 +124,4 @@ jQuery(document).on('ready', function () {
 			i++;
 		}
 	})();
-	/*
-	function animate() {
-	reqAnimFrame(animate);
-
-	x += speed;
-	if(x==800)
-	x = -10;
-
-	if(l == 4) l=1;
-	draw();
-	}
-
-
-	function draw() {
-	var canvas  = document.getElementById("ex1");
-	var context = canvas.getContext("2d");
-
-	context.clearRect(0, 0, 600, 200);
-	context.beginPath();
-	context.fillStyle="#0000ff";
-
-	var bird = new Image();
-	bird.src = "/images/bird"+l+".png";
-	if(x%20 ==0){
-	l++;}
-	context.drawImage(bird, x, 20);
-	context.fillRect(0,170, 600, 10);
-	}
-
-	animate();
-	*/
 });
