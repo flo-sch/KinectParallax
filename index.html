@@ -35,6 +35,9 @@
 			<div id='kinect-parallax-layer-4' class='kinect-parallax-layer'>
 				<img src='assets/images/3_wood.png' alt='Wood'>
 			</div>
+			<div id='kinect-parallax-layer-5' class='animated-layer kinect-parallax-layer'>
+				<canvas class='bird' id='bird-1'></canvas>
+			</div>
 		</div>
 		<div id='debug'>
 			<div>Kinect Position X: <span id='kinect-x'>0</span></div>
@@ -44,11 +47,12 @@
 		<script src='assets/js/vendor/zigfu.min.js'></script>
 		<script src='http://code.jquery.com/jquery-latest.min.js'></script>
 		<script>window.jQuery || document.write('<script src=\'assets/js/vendor/jquery-1.9.1.min.js\'><\/script>')</script>
+		<script src='assets/js/vendor/jquery.jCanvas-13.03.20.min.js'></script>
 		<script src='assets/js/vendor/jquery.kinect-parallax.js'></script>
 		<script src='assets/js/plugins.js'></script>
 		<script src='assets/js/app.js'></script>
 		<script>
-			jQuery(document).ready(function() {
+			jQuery(document).on('ready', function() {
 				(function ($) {
 					var $viewport = $('#kinect-parallax'),
 						$layers = $('#kinect-parallax .kinect-parallax-layer').KinectParallax('init', {
