@@ -4,6 +4,11 @@
 			'viewport': $('body'),
 			'axisXAllowed': true,
 			'axisYAllowed': true,
+			'axisZAllowed': true,
+			'scaling': {
+				'min': 0.8,
+				'max': 10,
+			},
 			'axisZ': 100
 		},
 		KPmethods = {
@@ -32,23 +37,32 @@
 					if ($data.bind) {
 						var x = $data.coords.x,
 							y = $data.coords.y,
+							z = $data.coords.z,
 							css;
-						if (typeof position === 'object' && position.x && position.y) {
+						if (typeof position === 'object' && position.x && position.y && position.z) {
 							x = ($data.axisXAllowed ? $data.init.left - (position.x * $data.movement.axisZ) : x);
 							y = ($data.axisYAllowed ? $data.init.top + (position.y * $data.movement.axisZ) * (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ : y);
-						} else if (typeof position === 'array' && position[0] && position[1]) {
+							z = ($data.axisZAllowed ? $data.init.scale + ($data.cameraInit.z - position.z) * $data.movement.axisZ / 1000 : z);
+						} else if (typeof position === 'array' && position[0] && position[1] && position[2]) {
 							x = ($data.axisXAllowed ? $data.init.left - (position[0] * $data.movement.axisZ) : x);
 							y = ($data.axisYAllowed ? $data.init.top + (position[1] * $data.movement.axisZ) * (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ : y);
+							z = ($data.axisZAllowed ? $data.init.scale + ($data.cameraInit.z - position[2]) * $data.movement.axisZ / 1000 : z);
 						} else if (debug) {
 							console.log('Unable to set the new position: ', position);
 						}
 						$data.coords = {
 							'x': Math.min(Math.max(x, $data.movement.minLeft), $data.movement.maxLeft),
 							'y': Math.min(Math.max(y, $data.movement.minTop), $data.movement.maxTop),
+							'z': Math.min(Math.max(z, $data.movement.minScale), $data.movement.maxScale)
 						};
 						css = {
 							'left': $data.coords.x,
-							'top': $data.coords.y
+							'top': $data.coords.y,
+							'-webkit-transform': 'scale(' + $data.coords.z + ')',
+							'-moz-transform': 'scale(' + $data.coords.z + ')',
+							'-ms-transform': 'scale(' + $data.coords.z + ')',
+							'-o-transform': 'scale(' + $data.coords.z + ')',
+							'transform': 'scale(' + $data.coords.z + ')'
 						};
 						$(this).css(css);
 					}
@@ -76,22 +90,27 @@
 						'viewport': options.viewport,
 						'axisXAllowed': options.axisXAllowed,
 						'axisYAllowed': options.axisYAllowed,
+						'axisZAllowed': options.axisZAllowed,
 						'axisZ': options.axisZ,
 						'version': '0.0.1',
 						'coords': {
 							'x': initialPosition.left,
-							'y': initialPosition.top
+							'y': initialPosition.top,
+							'z': 1
 						},
 						'movement': {
 							'minLeft': minLeft,
 							'maxLeft': maxLeft,
 							'minTop': minTop,
 							'maxTop': maxTop,
+							'minScale': options.scaling.min,
+							'maxScale': options.scaling.max,
 							'axisZ': axisZ,
 						},
 						'init': {
 							'left': initialPosition.left,
 							'top': initialPosition.top,
+							'scale': 1,
 							'zIndex': $node.css('z-index')
 						},
 						'cameraInit': {
@@ -101,6 +120,7 @@
 						},
 						'bind': false
 	           		});
+	           		console.log($node.data('KinectParallax'));
 				});
 			}
 		};

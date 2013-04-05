@@ -49,39 +49,31 @@
 		<script src='assets/js/app.js'></script>
 		<script>
 			jQuery(document).ready(function() {
-				var $viewport = jQuery('#kinect-parallax'),
-					$layers = jQuery('#kinect-parallax .kinect-parallax-layer').KinectParallax('init', {
-					'viewport': $viewport,
-					'axisXAllowed': true,
-					'axisYAllowed': true,
-					'axisZ': 100
-				});
-				jQuery(this).on('headstart', function (e, position) {
-					$layers.KinectParallax('start', position);
-				});
-				jQuery(this).on('headstop', function (e) {
-					$layers.KinectParallax('stop');
-				});
-				jQuery(this).on('headmove', function (e, position) {
-					$layers.KinectParallax('move', position);
-				});
-				/*
-				$viewport.on('mouseenter', function (e) {
-					console.log('mouseenter');
-					$layers.KinectParallax('start');
-				});
-				$viewport.on('mouseleave', function (e) {
-					console.log('mouseleave');
-					$layers.KinectParallax('stop');
-				});
-				$viewport.on('mousemove', function (e) {
-					console.log('mousemove');
-					$layers.KinectParallax('move', {
-						'x': e.pageX,
-						'y': e.pageY
+				(function ($) {
+					var $viewport = $('#kinect-parallax'),
+						$layers = $('#kinect-parallax .kinect-parallax-layer').KinectParallax('init', {
+							'viewport': $viewport,
+							'axisXAllowed': true,
+							'axisYAllowed': true,
+							'axisZAllowed': true,
+							'scaling': {
+								'min': 0.7,
+								'max': 2
+							},
+							'axisZ': 100
+						});
+
+					$(this).on('headstart', function (e, position) {
+						$layers.KinectParallax('start', position);
 					});
-				});
-				*/
+					$(this).on('headstop', function (e) {
+						$layers.KinectParallax('stop');
+					});
+					$(this).on('headmove', function (e, position) {
+						$layers.KinectParallax('move', position);
+					});
+				})(window.jQuery);
+				
 			});
 		</script>
 	</body>

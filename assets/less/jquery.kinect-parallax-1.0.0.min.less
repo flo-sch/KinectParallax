@@ -1,3 +1,18 @@
+.transformOrigin(@X: center, @Y: center, @Z: 0px) {
+	-webkit-transform-origin: @X @Y @Z; /* Safari and Chrome */
+	   -moz-transform-origin: @X @Y @Z; /* Firefox */
+	    -ms-transform-origin: @X @Y @Z; /* IE 9 */
+	     -o-transform-origin: @X @Y @Z; /* Opera */
+	        transform-origin: @X @Y @Z; /* W3C */
+}
+.transform(@transform: scale(1)) {
+	-webkit-transform: @transform; /* Safari and Chrome */
+	   -moz-transform: @transform; /* Firefox */
+	    -ms-transform: @transform; /* IE 9 */
+	     -o-transform: @transform; /* Opera */
+	        transform: @transform; /* W3C */
+}
+
 html {
 	body {
 		.kinect-parallax-viewport {
@@ -7,9 +22,11 @@ html {
 			height: 15em;
 			overflow: hidden;
 			background-color: #aebcc9;
+			.transformOrigin(center, center, 0px);
 		}
 		.kinect-parallax-layer {
 			position: absolute;
+			.transform(scale(1));
 		}
 	}
 }
