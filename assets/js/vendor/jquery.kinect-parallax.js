@@ -119,8 +119,7 @@
 							'z': null
 						},
 						'bind': false
-	           		});
-	           		console.log($node.data('KinectParallax'));
+					});
 				});
 			}
 		};
