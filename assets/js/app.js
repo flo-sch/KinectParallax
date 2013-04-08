@@ -56,7 +56,7 @@ jQuery(document).on('ready', function () {
 
 	// Bird animation
 	var initPosition = {
-			'top': 75,
+			'top': 15,
 			'left': -10
 		},
 		position = {
@@ -64,9 +64,9 @@ jQuery(document).on('ready', function () {
 			'left': initPosition.left
 		},
 		speed = {
-			'x': 2,
+			'x': 1,
 			'y': 0
-		},,
+		},
 		$bird = $('#bird-1')
 		loopLimit = {
 			'x': 600,
@@ -116,8 +116,9 @@ jQuery(document).on('ready', function () {
 		$bird.clearCanvas().drawImage({
 			source: sprite.frames[i].src,
 			x: position.left,
-			width: 20,
-			height: 21,
+			y: position.top,
+			width: 8,
+			height: 18,
 			fromCenter: false
 		});
 		if (position.left % 20 === 0) {

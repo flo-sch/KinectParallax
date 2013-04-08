@@ -1,3 +1,20 @@
+// jquery.KinectParallax.js
+// 1.0
+// Florent SCHILDKNECHT
+//
+// Project and documentation site:
+// 
+//
+// Repository:
+// https://github.com/Flo-Schield-Bobby/KinectParallax
+//
+
+// https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/isArray
+if(!Array.isArray) {
+	Array.isArray = function (vArg) {
+		return Object.prototype.toString.call(vArg) === "[object Array]";
+	};
+}
 (function($) {
 	var debug = true,
 		defaults = {
@@ -14,12 +31,24 @@
 		KPmethods = {
 			start: function (position) {
 				return this.each(function () {
-					var $data = $(this).data('KinectParallax');
+					var $data = $(this).data('KinectParallax'),
+						x,
+						y,
+						z;
 					$data.bind = true;
+					if (Array.isArray(position)) {
+						z = position[0];
+						y = position[1];
+						z = position[2];
+					} else {
+						x = position.x;
+						y = position.y;
+						z = position.z;
+					}
 					$data.cameraInit = {
-						'x': position.x,
-						'y': position.y,
-						'z': position.z
+						'x': x,
+						'y': y,
+						'z': z
 					}
 					$(this).data('KinectParallax', $data);
 				})
@@ -43,7 +72,7 @@
 							x = ($data.axisXAllowed ? $data.init.left - (position.x * $data.movement.axisZ) : x);
 							y = ($data.axisYAllowed ? $data.init.top + (position.y * $data.movement.axisZ) * (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ : y);
 							z = ($data.axisZAllowed ? $data.init.scale + ($data.cameraInit.z - position.z) * $data.movement.axisZ / 1000 : z);
-						} else if (typeof position === 'array' && position[0] && position[1] && position[2]) {
+						} else if (Array.isArray(position) && position[0] && position[1] && position[2]) {
 							x = ($data.axisXAllowed ? $data.init.left - (position[0] * $data.movement.axisZ) : x);
 							y = ($data.axisYAllowed ? $data.init.top + (position[1] * $data.movement.axisZ) * (($data.init.zIndex - $data.axisZ / 2) + 1) / $data.axisZ : y);
 							z = ($data.axisZAllowed ? $data.init.scale + ($data.cameraInit.z - position[2]) * $data.movement.axisZ / 1000 : z);
