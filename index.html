@@ -38,6 +38,7 @@
 			<div id='kinect-parallax-layer-5' class='animated-layer kinect-parallax-layer'>
 				<canvas class='bird' id='bird-1'></canvas>
 			</div>
+			<div class='cursor' id='cursor'></div>
 		</div>
 		<div id='debug'>
 			<div>Kinect Position X: <span id='kinect-x'>0</span></div>
@@ -52,8 +53,8 @@
 		<script src='assets/js/plugins.js'></script>
 		<script src='assets/js/app.js'></script>
 		<script>
-			jQuery(document).on('ready', function() {
-				(function ($) {
+			(function ($) {
+				$(document).on('ready', function() {
 					var $viewport = $('#kinect-parallax'),
 						$layers = $('#kinect-parallax .kinect-parallax-layer').KinectParallax('init', {
 							'viewport': $viewport,
@@ -65,10 +66,28 @@
 								'max': 2
 							},
 							'axisZ': 100
-						});
+						}),
+						initialPosition = {
+							'x': null,
+							'y': null,
+							'z': null
+						};
 
 					$(this).on('headstart', function (e, position) {
 						$layers.KinectParallax('start', position);
+						if (Array.isArray(position)) {
+							initialPosition = {
+								'x': position[0],
+								'y': position[1],
+								'z': position[2]
+							}
+						} else {
+							initialPosition = {
+								'x': position.x,
+								'y': position.y,
+								'z': position.z
+							}
+						}
 					});
 					$(this).on('headstop', function (e) {
 						$layers.KinectParallax('stop');
@@ -76,8 +95,8 @@
 					$(this).on('headmove', function (e, position) {
 						$layers.KinectParallax('move', position);
 					});
-				})(window.jQuery);
-			});
+				});
+			})(window.jQuery);
 		</script>
 	</body>
 </html>

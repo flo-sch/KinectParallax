@@ -16,7 +16,7 @@ if(!Array.isArray) {
 	};
 }
 (function($) {
-	var debug = true,
+	var debug = false,
 		defaults = {
 			'viewport': $('body'),
 			'axisXAllowed': true,

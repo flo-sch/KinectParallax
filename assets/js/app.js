@@ -8,6 +8,51 @@ jQuery(document).on('ready', function () {
 			$kinectX = jQuery('#kinect-x'),
 			$kinectY = jQuery('#kinect-y'),
 			$kinectZ = jQuery('#kinect-z'),
+			$viewport = jQuery('#kinect-parallax'),
+			handSession = {
+				'$el': jQuery('#cursor'),
+				'cursor': zig.controls.Cursor()
+			},
+			cursorAreaWidth = $viewport.width() - handSession.$el.width(),
+			cursorAreaHeight = $viewport.height() - handSession.$el.height(),
+			handEvents = {
+				onsessionstart: function (e) {
+					console.log('start', e, this);
+					handSession.$el.show();
+					handSession.cursor.addEventListener('move', function (cursor) {
+						handSession.$el.css({
+							'left': cursor.x * cursorAreaWidth,
+							'top': cursor.y * cursorAreaHeight
+						});
+					});
+				},
+				onsessionupdate: function (e) {
+					//console.log('update', e);
+				},
+				onsessionend: function (e) {
+					console.log('end', e);
+					handSession.$el.hide();
+				},
+				onattach: function (user) {
+					console.log('attach', user);
+				},
+				ondetach: function (user) {
+					console.log('detach', user);
+				}
+			},
+			pushEvents = {
+				onpush: function (pushEvent) {
+					console.log('push', pushEvent.pushPosition);
+				},
+				onrelease: function (releaseEvent) {
+					console.log('release', releaseEvent.pushPosition);
+				},
+				onclick: function (clickEvent) {
+					console.log('click', clickEvent.pushPosition);
+				}
+			},
+			handSessionDetector,
+			pushDetector,
 			onUserMove = function(user) {
 				posx = user.skeleton[zig.Joint.Head].position[0];
 				posy = user.skeleton[zig.Joint.Head].position[1];
@@ -23,8 +68,17 @@ jQuery(document).on('ready', function () {
 			};
 			
 		engager.addEventListener('userengaged', function(user) {
-			console.log('user engaged', user.id);
 			user.addEventListener('userupdate', onUserMove);
+
+			handSessionDetector = zig.HandSessionDetector();
+			handSessionDetector.addListener(handEvents);
+			user.addListener(handSessionDetector);
+
+			pushDetector = zig.controls.PushDetector();
+			pushDetector.addEventListener('push', pushEvents.onpush);
+			pushDetector.addEventListener('release', pushEvents.onrelease);
+			pushDetector.addEventListener('click', pushEvents.onclick);
+			zig.singleUserSession.addListener(pushDetector);
 
 			posx = user.skeleton[zig.Joint.Head].position[0];
 			posy = user.skeleton[zig.Joint.Head].position[1];
@@ -37,22 +91,15 @@ jQuery(document).on('ready', function () {
 		});
 
 		engager.addEventListener('userdisengaged', function(user) {
-			console.log('user disengaged', user.id);
-			console.log('removeEventListener', user.id);
 			user.removeEventListener('userupdate', onUserMove);
 			$doc.trigger('headstop');
 		});
 
 		zig.addListener(engager);
+		zig.singleUserSession.addListener(handSession.cursor);
 	} else {
 		alert('Zigfu cannot be load :(');
 	}
-
-	var x =  -10;
-    var y = 75;
-    var speed = 2;
-    var i = j = l= 1;
-
 
 	// Bird animation
 	var initPosition = {
@@ -64,7 +111,7 @@ jQuery(document).on('ready', function () {
 			'left': initPosition.left
 		},
 		speed = {
-			'x': 1,
+			'x': 0.5,
 			'y': 0
 		},
 		$bird = $('#bird-1')
@@ -114,14 +161,14 @@ jQuery(document).on('ready', function () {
 			i = 0;
 		}
 		$bird.clearCanvas().drawImage({
-			source: sprite.frames[i].src,
-			x: position.left,
-			y: position.top,
-			width: 8,
-			height: 18,
-			fromCenter: false
-		});
-		if (position.left % 20 === 0) {
+				source: $(this).attr('src'),
+				x: position.left,
+				y: position.top,
+				width: 8,
+				height: 18,
+				fromCenter: false
+			});
+		if (position.left % 15 === 0) {
 			i++;
 		}
 	})();

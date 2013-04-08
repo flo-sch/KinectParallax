@@ -23,6 +23,14 @@
 
 // HELPERS / PLUGINS CONFIG //
 
+// isArray check for vars from Mozilla Developer Network
+// https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/isArray
+if(!Array.isArray) {
+	Array.isArray = function (vArg) {
+		return Object.prototype.toString.call(vArg) === "[object Array]";
+	};
+}
+
 // requestAnimationFrame polyfill from Erik Möller - Opera developer
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 window.RAF = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame;
