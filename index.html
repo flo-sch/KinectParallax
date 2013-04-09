@@ -12,6 +12,7 @@
 		<meta name='author' content='Florent SCHILDKNECHT'>
 		<meta name='viewport' content='width=device-width'>
 		<link rel='stylesheet' href='assets/css/normalize.css'>
+		<link rel='stylesheet' href='assets/css/jquery-ui-1.10.2.cupertino.min.css'>
 		<link rel='stylesheet' href='assets/css/jquery.kinect-parallax-1.0.0.min.css'>
 		<link rel='stylesheet' href='assets/css/app.min.css'>
 		<script src='assets/js/vendor/modernizr-2.6.2.min.js'></script>
@@ -21,7 +22,7 @@
 			<h1 id='app-name'>Kinect-based Parallax Prototype</h1>
 		</header>
 		<!-- #kinect-parallax is our viewport -->
-		<div id='kinect-parallax' class='kinect-parallax-viewport'>
+		<section id='kinect-parallax' class='kinect-parallax-viewport'>
 			<!-- .kinect-parallax-laery are our layers, just set them a width, a height, and a z-index ! -->
 			<div id='kinect-parallax-layer-1' class='kinect-parallax-layer'>
 				<img src='assets/images/0_sun.png' alt='Sun'>
@@ -39,18 +40,24 @@
 				<canvas class='bird' id='bird-1'></canvas>
 			</div>
 			<div class='cursor' id='cursor'></div>
+		</section>
+		<div id='sun-informations' title='How much do you like the sun ?'>
+			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
+			<img src='assets/images/funny-sun.jpg' alt='Funny Sun' />
 		</div>
-		<div id='debug'>
-			<div>Kinect Position X: <span id='kinect-x'>0</span></div>
-			<div>Kinect Position Y: <span id='kinect-y'>0</span></div>
-			<div>Kinect Position Z: <span id='kinect-z'>0</span></div>
-		</div>
+		<section id='debug'>
+			<div>Head Position X: <span id='head-x'>0</span></div>
+			<div>Head Position Y: <span id='head-y'>0</span></div>
+			<div>Head Position Z: <span id='head-z'>0</span></div>
+		</section>
 		<script src='assets/js/vendor/zigfu.min.js'></script>
 		<script src='http://code.jquery.com/jquery-latest.min.js'></script>
 		<script>window.jQuery || document.write('<script src=\'assets/js/vendor/jquery-1.9.1.min.js\'><\/script>')</script>
+		<script src='assets/js/vendor/jquery-ui-1.10.2.cupertino.min.js'></script>
 		<script src='assets/js/vendor/jquery.jCanvas-13.03.20.min.js'></script>
 		<script src='assets/js/vendor/jquery.kinect-parallax.js'></script>
 		<script src='assets/js/plugins.js'></script>
+		<script src='assets/js/vendor/polygon.js'></script>
 		<script src='assets/js/app.js'></script>
 		<script>
 			(function ($) {

@@ -52,20 +52,3 @@ if (!window.CRAF) {
         clearTimeout(id);
     };
 }
-
-// Hide zigfu advertising element
-$(document).ready(function () {
-	var $zigfuLink,
-		checkInterval = setInterval(function () {
-			$zigfuLink = $('div').find('a[href="http://zigfu.com/watermark"]');
-			if ($zigfuLink.length > 0) {
-				// Zigfu REQUIRE this element to be visible... ?!
-				$zigfuLink.parent().css({
-					'width': '1px',
-					'height': '1px',
-					'overflow': 'hidden'
-				});
-				clearInterval(checkInterval);
-			}
-		}, 50);
-});
