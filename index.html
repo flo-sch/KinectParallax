@@ -20,6 +20,7 @@
 	<body>
 		<header id='app-header'>
 			<h1 id='app-name'>Kinect-based Parallax Prototype</h1>
+			<h4 id='app-user'></h4>
 		</header>
 		<!-- #kinect-parallax is our viewport -->
 		<section id='kinect-parallax' class='kinect-parallax-viewport'>
@@ -36,7 +37,7 @@
 			<div id='kinect-parallax-layer-4' class='kinect-parallax-layer'>
 				<img src='assets/images/3_wood.png' alt='Wood'>
 			</div>
-			<div id='kinect-parallax-layer-5' class='animated-layer kinect-parallax-layer'>
+			<div id='kinect-parallax-layer-5' class='kinect-parallax-layer animated-layer'>
 				<canvas class='bird' id='bird-1'></canvas>
 			</div>
 			<div class='cursor' id='cursor'></div>
@@ -46,18 +47,34 @@
 			<img src='assets/images/funny-sun.jpg' alt='Funny Sun' />
 		</div>
 		<section id='debug'>
-			<div>Head Position X: <span id='head-x'>0</span></div>
-			<div>Head Position Y: <span id='head-y'>0</span></div>
-			<div>Head Position Z: <span id='head-z'>0</span></div>
+			<table>
+				<caption>DEBUG - Head Position</caption>
+				<thead>
+					<tr>
+						<th>X</th>
+						<th>Y</th>
+						<th>Z</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td id='head-x'>0</td>
+						<td id='head-y'>0</td>
+						<td id='head-z'>0</td>
+					</tr>
+				</tbody>
+			</table>
 		</section>
-		<script src='assets/js/vendor/zigfu.min.js'></script>
 		<script src='http://code.jquery.com/jquery-latest.min.js'></script>
 		<script>window.jQuery || document.write('<script src=\'assets/js/vendor/jquery-1.9.1.min.js\'><\/script>')</script>
 		<script src='assets/js/vendor/jquery-ui-1.10.2.cupertino.min.js'></script>
 		<script src='assets/js/vendor/jquery.jCanvas-13.03.20.min.js'></script>
 		<script src='assets/js/vendor/jquery.kinect-parallax.js'></script>
-		<script src='assets/js/plugins.js'></script>
+		<script src='assets/js/vendor/spin-1.3.0.min.js'></script>
+		<script src='assets/js/vendor/buzz-1.0.6.min.js'></script>
+		<script src='assets/js/vendor/zigfu.min.js'></script>
 		<script src='assets/js/vendor/polygon.js'></script>
+		<script src='assets/js/plugins.js'></script>
 		<script src='assets/js/app.js'></script>
 		<script>
 			(function ($) {

@@ -31,6 +31,54 @@ if(!Array.isArray) {
 	};
 }
 
+// Spin.js jQuery plugin
+(function($) {
+	$.fn.spin = function(opts, color) {
+		if (arguments.length == 1 && opts == false) {
+			return this.each(function() {
+				var $this = $(this),
+					data = $this.data();
+
+				if (data.spinner) {
+					data.spinner.stop();
+					delete data.spinner;
+				}
+			});
+		}
+		var presets = {
+			"tiny": { lines: 8, length: 2, width: 2, radius: 3 },
+			"small": { lines: 8, length: 4, width: 3, radius: 5 },
+			"large": { lines: 10, length: 8, width: 4, radius: 8 }
+		};
+		if (Spinner) {
+			return this.each(function() {
+				var $this = $(this),
+					data = $this.data();
+				
+				if (data.spinner) {
+					data.spinner.stop();
+					delete data.spinner;
+				}
+				if (opts !== false) {
+					if (typeof opts === "string") {
+						if (opts in presets) {
+							opts = presets[opts];
+						} else {
+							opts = {};
+						}
+						if (color) {
+							opts.color = color;
+						}
+					}
+					data.spinner = new Spinner($.extend({color: $this.css('color')}, opts)).spin(this);
+				}
+			});
+		} else {
+			throw "Spinner class not available.";
+		}
+	};
+})(jQuery);
+
 // requestAnimationFrame polyfill from Erik Möller - Opera developer
 // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 window.RAF = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame;
@@ -49,6 +97,6 @@ if (!window.RAF) {
 window.CRAF = window.webkitCancelRequestAnimationFrame || window.mozCancelRequestAnimationFrame || window.msCancelRequestAnimationFrame || window.oCancelRequestAnimationFrame;
 if (!window.CRAF) {
 	window.CRAF = function(id) {
-        clearTimeout(id);
-    };
+		clearTimeout(id);
+	};
 }
