@@ -7,17 +7,23 @@ jQuery(document).on('ready', function () {
 					'viewport': $('#kinect-parallax'),
 					'body': $('body'),
 					onUserMove: function(user) {
-						this.position.x = user.skeleton[zig.Joint.Head].position[0];
-						this.position.y = user.skeleton[zig.Joint.Head].position[1];
-						this.position.z = user.skeleton[zig.Joint.Head].position[2];
-						this.$headX.text(this.position.x);
-						this.$headY.text(this.position.y);
-						this.$headZ.text(this.position.z);
-						this.$doc.trigger('headmove', {
-							'x': this.position.x,
-							'y': this.position.y,
-							'z': this.position.z
-						});
+						if (this.config.enable.parallax === true) {
+							this.position.x = user.skeleton[zig.Joint.Head].position[0];
+							this.position.y = user.skeleton[zig.Joint.Head].position[1];
+							this.position.z = user.skeleton[zig.Joint.Head].position[2];
+							this.$headX.text(this.position.x);
+							this.$headY.text(this.position.y);
+							this.$headZ.text(this.position.z);
+							this.$doc.trigger('headmove', {
+								'x': this.position.x,
+								'y': this.position.y,
+								'z': this.position.z
+							});
+						}
+					},
+					'enable': {
+						'parallax': true,
+						'hand': true
 					}
 				};
 				this.config = $.extend({}, this.defaults, config);
@@ -26,7 +32,9 @@ jQuery(document).on('ready', function () {
 			App;
 		Application.prototype = {
 			init: function () {
+				var app = this;
 				this.$doc = $(document);
+				this.$win = $(window);
 				this.$headX = $('#head-x');
 				this.$headY = $('#head-y');
 				this.$headZ = $('#head-z');
@@ -97,25 +105,27 @@ jQuery(document).on('ready', function () {
 
 						},
 						onsessionstart: function (e) {
-							App.handSession.$el.show();
-							var hoverTimer = new App.HoverTimer(1.5, function () {
-								App.$sunLayer.trigger('hover');
-							});
-							App.handSession.cursor.addEventListener('move', function (cursor) {
-								App.handSession.$el.css({
-									'left': cursor.x * App.cursorAreaWidth,
-									'top': cursor.y * App.cursorAreaHeight
+							if (App.config.enable.hand === true) {
+								App.handSession.$el.show();
+								var hoverTimer = new App.HoverTimer(1.5, function () {
+									App.$sunLayer.trigger('hover');
 								});
-								// Bind hover on custom Area
-								var point = new Point(cursor.x * App.cursorAreaWidth, cursor.y * App.cursorAreaHeight);
-								if (App.sunArea.contains(point)) {
-									hoverTimer.launch();
-									App.handSession.$el.addClass('hover');
-								} else {
-									hoverTimer.cancel();
-									App.handSession.$el.removeClass('hover');
-								}
-							});
+								App.handSession.cursor.addEventListener('move', function (cursor) {
+									App.handSession.$el.css({
+										'left': cursor.x * App.cursorAreaWidth,
+										'top': cursor.y * App.cursorAreaHeight
+									});
+									// Bind hover on custom Area
+									var point = new Point(cursor.x * App.cursorAreaWidth, cursor.y * App.cursorAreaHeight);
+									if (App.sunArea.contains(point)) {
+										hoverTimer.launch();
+										App.handSession.$el.addClass('hover');
+									} else {
+										hoverTimer.cancel();
+										App.handSession.$el.removeClass('hover');
+									}
+								});
+							}
 						},
 						onsessionend: function (e) {
 							App.handSession.$el.hide();
@@ -126,7 +136,9 @@ jQuery(document).on('ready', function () {
 					},
 					'push': {
 						onpush: function (pushEvent) {
-							App.handSession.$el.addClass('active');
+							if (App.config.enable.hand === true) {
+								App.handSession.$el.addClass('active');
+							}
 						},
 						onrelease: function (releaseEvent) {
 							// Trigger something
@@ -144,16 +156,24 @@ jQuery(document).on('ready', function () {
 
 						},
 						swipeup: function (swipeEvent) {
-							App.$sunInformations.dialog('close');
+							if (App.config.enable.hand === true) {
+								App.$sunInformations.dialog('close');
+							}
 						},
 						swipedown: function (swipeEvent) {
-							App.$sunInformations.dialog('close');
+							if (App.config.enable.hand === true) {
+								App.$sunInformations.dialog('close');
+							}
 						},
 						swipeleft: function (swipeEvent) {
-							App.$sunInformations.dialog('close');
+							if (App.config.enable.hand === true) {
+								App.$sunInformations.dialog('close');
+							}
 						},
 						swiperight: function (swipeEvent) {
-							App.$sunInformations.dialog('close');
+							if (App.config.enable.hand === true) {
+								App.$sunInformations.dialog('close');
+							}
 						},
 						swiperelease: function (swipeEvent) {
 
@@ -161,16 +181,35 @@ jQuery(document).on('ready', function () {
 					},
 					'wave': {
 						wave: function (waveEvent) {
-							window.location.reload();
+							if (App.config.enable.hand === true) {
+								window.location.reload();
+							}
 						}
 					}
 				};
+				// Bind keyboards to enable/disable Parallax/Hand Gestures
+				this.$win.on('keyup', function (keyboardEvent) {
+					switch (true) {
+						case ((keyboardEvent.keyCode === 72) && (keyboardEvent.altKey === true)):
+							// H
+							console.log('Alt + H');
+							app.toggleHandGestures();
+							break;
+						case ((keyboardEvent.keyCode === 80) && (keyboardEvent.altKey === true)):
+							// H
+							console.log('Alt + P');
+							app.toggleParallax();
+							break;
+						default:
+							break;
+					}
+				});
 				// Preload sounds of Buzz
 				this.sounds = {
 					'plop': new buzz.sound('assets/audio/plop', {
 						formats: ['ogg']
 					})
-				}
+				};
 				this.position = {
 					'x': 0,
 					'y': 0,
@@ -238,6 +277,12 @@ jQuery(document).on('ready', function () {
 
 				zig.addListener(this.engager);
 			},
+			toggleParallax: function () {
+				this.config.enable.parallax = !this.config.enable.parallax;
+			},
+			toggleHandGestures: function () {
+				this.config.enable.hand = !this.config.enable.hand;
+			},
 			displayLoader: function () {
 				$('body').append($('<div/>', {
 					'class': 'overlay'
@@ -297,6 +342,7 @@ jQuery(document).on('ready', function () {
 		});
 
 		// Bird animation
+		/*
 		var initPosition = {
 				'top': 0,
 				'left': -10
@@ -364,6 +410,7 @@ jQuery(document).on('ready', function () {
 				i++;
 			}
 		})();
+		*/
 	} else {
 		alert('Zigfu cannot be load :(');
 	}
