@@ -6,6 +6,10 @@ jQuery(document).on('ready', function () {
 					'debug': true,
 					'viewport': $('#kinect-parallax'),
 					'body': $('body'),
+					'enable': {
+						'parallax': true,
+						'hand': true
+					},
 					onUserMove: function(user) {
 						if (this.config.enable.parallax === true) {
 							this.position.x = user.skeleton[zig.Joint.Head].position[0];
@@ -20,10 +24,6 @@ jQuery(document).on('ready', function () {
 								'z': this.position.z
 							});
 						}
-					},
-					'enable': {
-						'parallax': true,
-						'hand': true
 					}
 				};
 				this.config = $.extend({}, this.defaults, config);
@@ -105,30 +105,30 @@ jQuery(document).on('ready', function () {
 
 						},
 						onsessionstart: function (e) {
-							if (App.config.enable.hand === true) {
-								App.handSession.$el.show();
-								var hoverTimer = new App.HoverTimer(1.5, function () {
-									App.$sunLayer.trigger('hover');
+							if (app.config.enable.hand === true) {
+								app.handSession.$el.show();
+								var hoverTimer = new app.HoverTimer(1.5, function () {
+									app.$sunLayer.trigger('hover');
 								});
-								App.handSession.cursor.addEventListener('move', function (cursor) {
-									App.handSession.$el.css({
-										'left': cursor.x * App.cursorAreaWidth,
-										'top': cursor.y * App.cursorAreaHeight
+								app.handSession.cursor.addEventListener('move', function (cursor) {
+									app.handSession.$el.css({
+										'left': cursor.x * app.cursorAreaWidth,
+										'top': cursor.y * app.cursorAreaHeight
 									});
 									// Bind hover on custom Area
-									var point = new Point(cursor.x * App.cursorAreaWidth, cursor.y * App.cursorAreaHeight);
-									if (App.sunArea.contains(point)) {
+									var point = new Point(cursor.x * app.cursorAreaWidth, cursor.y * app.cursorAreaHeight);
+									if (app.sunArea.contains(point)) {
 										hoverTimer.launch();
-										App.handSession.$el.addClass('hover');
+										app.handSession.$el.addClass('hover');
 									} else {
 										hoverTimer.cancel();
-										App.handSession.$el.removeClass('hover');
+										app.handSession.$el.removeClass('hover');
 									}
 								});
 							}
 						},
 						onsessionend: function (e) {
-							App.handSession.$el.hide();
+							app.handSession.$el.hide();
 						},
 						ondetach: function (user) {
 
@@ -136,16 +136,16 @@ jQuery(document).on('ready', function () {
 					},
 					'push': {
 						onpush: function (pushEvent) {
-							if (App.config.enable.hand === true) {
-								App.handSession.$el.addClass('active');
+							if (app.config.enable.hand === true) {
+								app.handSession.$el.addClass('active');
 							}
 						},
 						onrelease: function (releaseEvent) {
 							// Trigger something
-							App.$doc.trigger('push', {
+							app.$doc.trigger('push', {
 								'position': releaseEvent.pushPosition
 							});
-							App.handSession.$el.removeClass('active');
+							app.handSession.$el.removeClass('active');
 						},
 						onclick: function (clickEvent) {
 
@@ -156,23 +156,23 @@ jQuery(document).on('ready', function () {
 
 						},
 						swipeup: function (swipeEvent) {
-							if (App.config.enable.hand === true) {
-								App.$sunInformations.dialog('close');
+							if (app.config.enable.hand === true) {
+								app.$sunInformations.dialog('close');
 							}
 						},
 						swipedown: function (swipeEvent) {
-							if (App.config.enable.hand === true) {
-								App.$sunInformations.dialog('close');
+							if (app.config.enable.hand === true) {
+								app.$sunInformations.dialog('close');
 							}
 						},
 						swipeleft: function (swipeEvent) {
-							if (App.config.enable.hand === true) {
-								App.$sunInformations.dialog('close');
+							if (app.config.enable.hand === true) {
+								app.$sunInformations.dialog('close');
 							}
 						},
 						swiperight: function (swipeEvent) {
-							if (App.config.enable.hand === true) {
-								App.$sunInformations.dialog('close');
+							if (app.config.enable.hand === true) {
+								app.$sunInformations.dialog('close');
 							}
 						},
 						swiperelease: function (swipeEvent) {
@@ -181,7 +181,7 @@ jQuery(document).on('ready', function () {
 					},
 					'wave': {
 						wave: function (waveEvent) {
-							if (App.config.enable.hand === true) {
+							if (app.config.enable.hand === true) {
 								window.location.reload();
 							}
 						}
@@ -192,12 +192,10 @@ jQuery(document).on('ready', function () {
 					switch (true) {
 						case ((keyboardEvent.keyCode === 72) && (keyboardEvent.altKey === true)):
 							// H
-							console.log('Alt + H');
 							app.toggleHandGestures();
 							break;
 						case ((keyboardEvent.keyCode === 80) && (keyboardEvent.altKey === true)):
 							// H
-							console.log('Alt + P');
 							app.toggleParallax();
 							break;
 						default:
@@ -268,6 +266,30 @@ jQuery(document).on('ready', function () {
 				this.hideZigfuLink();
 
 				this.engager.addEventListener('userdisengaged', function(user) {
+					console.log(user);
+
+					app.detectors.push.removeEventListener('push', app.events.push.onpush);
+					app.detectors.push.removeEventListener('release', app.events.push.onrelease);
+					app.detectors.push.removeEventListener('click', app.events.push.onclick);
+					app.detectors.handSession.removeListener(app.detectors.push);
+					app.detectors.push = null;
+
+					app.detectors.wave.removeEventListener('wave', app.events.wave.wave);
+					app.detectors.handSession.removeListener(app.detectors.wave);
+					app.detectors.wave = null;
+
+					app.detectors.swipe = zig.controls.SwipeDetector();
+					app.detectors.swipe.removeEventListener('swipe', app.events.swipe.swipe);
+					app.detectors.swipe.removeEventListener('swipeup', app.events.swipe.swipeup);
+					app.detectors.swipe.removeEventListener('swipedown', app.events.swipe.swipedown);
+					app.detectors.swipe.removeEventListener('swipeleft', app.events.swipe.swipeleft);
+					app.detectors.swipe.removeEventListener('swiperight', app.events.swipe.swiperight);
+					app.detectors.swipe.removeEventListener('swiperelease', app.events.swipe.swiperelease);
+					app.detectors.swipe = null;
+
+					app.detectors.handSession.removeListener(app.events.hand);
+					app.detectors.handSession.removeListener(app.handSession.cursor);
+
 					user.removeEventListener('userupdate', function (user) {
 						app.config.onUserMove.call(app, user);
 					});
@@ -328,12 +350,19 @@ jQuery(document).on('ready', function () {
 				if (sound in this.sounds) {
 					this.sounds[sound].play();
 				}
+			},
+			supportsCSSTransform: function () {
+
 			}
 		};
 		App = new Application({
 			debug: true,
 			body: $('body'),
-			viewport: $('#kinect-parallax')
+			viewport: $('#kinect-parallax'),
+			enable: {
+				parallax: true,
+				hand: false
+			}
 		});
 		App.$sunLayer.on('hover', function (e) {
 			App.$sunInformations.dialog('open');

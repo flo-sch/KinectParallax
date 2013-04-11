@@ -24,7 +24,7 @@ if(!Array.isArray) {
 			'axisZAllowed': true,
 			'scaling': {
 				'min': 0.8,
-				'max': 10,
+				'max': 10
 			},
 			'axisZ': 100
 		},
@@ -84,15 +84,27 @@ if(!Array.isArray) {
 							'y': Math.min(Math.max(y, $data.movement.minTop), $data.movement.maxTop),
 							'z': Math.min(Math.max(z, $data.movement.minScale), $data.movement.maxScale)
 						};
-						css = {
-							'left': $data.coords.x,
-							'top': $data.coords.y,
-							'-webkit-transform': 'scale(' + $data.coords.z + ')',
-							'-moz-transform': 'scale(' + $data.coords.z + ')',
-							'-ms-transform': 'scale(' + $data.coords.z + ')',
-							'-o-transform': 'scale(' + $data.coords.z + ')',
-							'transform': 'scale(' + $data.coords.z + ')'
-						};
+						if ($.support.cssProperty('transform')) {
+							css = {
+								'left': 'auto',
+								'top': 'auto',
+								'-webkit-transform': 'translate3d(' + $data.coords.x + 'px, ' + $data.coords.y + 'px, 0) scale(' + $data.coords.z + ')',
+								'-moz-transform': 'translate3d(' + $data.coords.x + 'px, ' + $data.coords.y + 'px, 0) scale(' + $data.coords.z + ')',
+								'-ms-transform': 'translate3d(' + $data.coords.x + 'px, ' + $data.coords.y + 'px, 0) scale(' + $data.coords.z + ')',
+								'-o-transform': 'translate3d(' + $data.coords.x + 'px, ' + $data.coords.y + 'px, 0) scale(' + $data.coords.z + ')',
+								'transform': 'translate3d(' + $data.coords.x + 'px, ' + $data.coords.y + 'px, 0) scale(' + $data.coords.z + ')'
+							};
+						} else {
+							css = {
+								'left': $data.coords.x,
+								'top': $data.coords.y,
+								'-webkit-transform': 'scale(' + $data.coords.z + ')',
+								'-moz-transform': 'scale(' + $data.coords.z + ')',
+								'-ms-transform': 'scale(' + $data.coords.z + ')',
+								'-o-transform': 'scale(' + $data.coords.z + ')',
+								'transform': 'scale(' + $data.coords.z + ')'
+							};
+						}
 						$(this).css(css);
 					}
 				});
@@ -134,7 +146,7 @@ if(!Array.isArray) {
 							'maxTop': maxTop,
 							'minScale': options.scaling.min,
 							'maxScale': options.scaling.max,
-							'axisZ': axisZ,
+							'axisZ': axisZ
 						},
 						'init': {
 							'left': initialPosition.left,
