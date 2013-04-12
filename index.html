@@ -26,34 +26,34 @@
 		<section id='kinect-parallax' class='kinect-parallax-viewport'>
 			<!-- .kinect-parallax-laery are our layers, just set them a width, a height, and a z-index ! -->
 			<div id='kinect-parallax-layer-1' class='kinect-parallax-layer'>
-				<img src='assets/images/layers/layer-1bis.png' alt='Car'>
+				<img src='assets/images/layers/layer-1bis.png' alt='Front'>
+				<img id='car' src='assets/images/layers/layer-2bis.png' alt='Car'>
 			</div>
 			<div id='kinect-parallax-layer-2' class='kinect-parallax-layer'>
-				<img src='assets/images/layers/layer-2bis.png' alt='Front'>
-			</div>
-			<div id='kinect-parallax-layer-3' class='kinect-parallax-layer'>
 				<img src='assets/images/layers/layer-3bis.png' alt='Left moutains'>
 			</div>
-			<div id='kinect-parallax-layer-4' class='kinect-parallax-layer'>
+			<div id='kinect-parallax-layer-3' class='kinect-parallax-layer'>
 				<img src='assets/images/layers/layer-4bis.png' alt='Right moutains'>
 			</div>
-			<div id='kinect-parallax-layer-5' class='kinect-parallax-layer'>
+			<div id='kinect-parallax-layer-4' class='kinect-parallax-layer'>
 				<img src='assets/images/layers/layer-5bis.png' alt='Background moutains'>
 			</div>
-			<div id='kinect-parallax-layer-6' class='kinect-parallax-layer'>
+			<div id='kinect-parallax-layer-5' class='kinect-parallax-layer'>
 				<img src='assets/images/layers/layer-6bis.png' alt='Sky and sun'>
 			</div>
 			<!--
-			<div id='kinect-parallax-layer-5' class='kinect-parallax-layer animated-layer'>
+			<div id='kinect-parallax-layer-7' class='kinect-parallax-layer animated-layer'>
 				<canvas class='bird' id='bird-1'></canvas>
 			</div>
 			-->
 			<div class='cursor' id='cursor'></div>
 		</section>
+		<!--
 		<div id='sun-informations' title='How much do you like the sun ?'>
 			<p>Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat.</p>
 			<img src='assets/images/funny-sun.jpg' alt='Funny Sun' />
 		</div>
+		-->
 		<section id='debug'>
 			<table>
 				<caption>DEBUG - Head Position</caption>
@@ -128,10 +128,10 @@
 					$(this).on('headmove', function (e, position) {
 						$layers.KinectParallax('move', position);
 					});
-					$(document).on('moveoffscalearea', function () {
+					$(this).on('moveoffscalearea', function () {
 						console.log('TOO FAR');
 					});
-					$(document).on('moveonscalearea', function () {
+					$(this).on('moveonscalearea', function () {
 						console.log('OKAY');
 					});
 				});

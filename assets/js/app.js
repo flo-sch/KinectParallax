@@ -40,25 +40,57 @@ jQuery(document).on('ready', function () {
 				this.$headZ = $('#head-z');
 				this.$viewport = this.config.viewport;
 				this.$body = this.config.body;
-				this.$sunLayer = $('#kinect-parallax-layer-4');
 				this.$user = $('#app-user');
+				/*
+				this.$sunLayer = $('#kinect-parallax-layer-4');
 				this.$sunInformations = $('#sun-informations').dialog({
 					autoOpen: false,
 					dialogClass: 'popin',
 					width: 500
 				});
+				*/
+				this.$car = $('#car');
+				this.cars = [
+					$('<img/>', {
+						'src': 'assets/images/layers/layer-2bis.png'
+					}),
+					$('<img/>', {
+						'src': 'assets/images/layers/layer-2bis-c1.png'
+					}),
+					$('<img/>', {
+						'src': 'assets/images/layers/layer-2bis-c2.png'
+					}),
+					$('<img/>', {
+						'src': 'assets/images/layers/layer-2bis-c3.png'
+					}),
+					$('<img/>', {
+						'src': 'assets/images/layers/layer-2bis-c4.png'
+					}),
+					$('<img/>', {
+						'src': 'assets/images/layers/layer-2bis-c5.png'
+					}),
+					$('<img/>', {
+						'src': 'assets/images/layers/layer-2bis-c6.png'
+					}),
+					$('<img/>', {
+						'src': 'assets/images/layers/layer-2bis-c7.png'
+					})
+				];
+				this.currentCar = 0;
 				this.handSession = {
 					'$el': $('#cursor'),
 					'cursor': zig.controls.Cursor()
 				}
-				this.cursorAreaWidth = this.$viewport.width() - this.handSession.$el.width(),
-				this.cursorAreaHeight = this.$viewport.height() - this.handSession.$el.height(),
+				this.cursorAreaWidth = this.$viewport.width() - this.handSession.$el.width();
+				this.cursorAreaHeight = this.$viewport.height() - this.handSession.$el.height();
+				/*
 				this.sunArea = new Polygon([
 					[0.45 * this.cursorAreaWidth, 0.05 * this.cursorAreaHeight],
 					[0.45 * this.cursorAreaWidth, 0.25 * this.cursorAreaHeight],
 					[0.55 * this.cursorAreaWidth, 0.25 * this.cursorAreaHeight],
 					[0.55 * this.cursorAreaWidth, 0.05 * this.cursorAreaHeight]
 				]);
+				*/
 				this.HoverTimer = (function () {
 					function Timer(delay, callback) {
 						this.timeout = null;
@@ -107,15 +139,18 @@ jQuery(document).on('ready', function () {
 						onsessionstart: function (e) {
 							if (app.config.enable.hand === true) {
 								app.handSession.$el.show();
+								/*
 								var hoverTimer = new app.HoverTimer(1.5, function () {
 									app.$sunLayer.trigger('hover');
 								});
+								*/
 								app.handSession.cursor.addEventListener('move', function (cursor) {
 									app.handSession.$el.css({
 										'left': cursor.x * app.cursorAreaWidth,
 										'top': cursor.y * app.cursorAreaHeight
 									});
 									// Bind hover on custom Area
+									/*
 									var point = new Point(cursor.x * app.cursorAreaWidth, cursor.y * app.cursorAreaHeight);
 									if (app.sunArea.contains(point)) {
 										hoverTimer.launch();
@@ -124,6 +159,7 @@ jQuery(document).on('ready', function () {
 										hoverTimer.cancel();
 										app.handSession.$el.removeClass('hover');
 									}
+									*/
 								});
 							}
 						},
@@ -157,22 +193,32 @@ jQuery(document).on('ready', function () {
 						},
 						swipeup: function (swipeEvent) {
 							if (app.config.enable.hand === true) {
-								app.$sunInformations.dialog('close');
+								//app.$sunInformations.dialog('close');
 							}
 						},
 						swipedown: function (swipeEvent) {
 							if (app.config.enable.hand === true) {
-								app.$sunInformations.dialog('close');
+								//app.$sunInformations.dialog('close');
 							}
 						},
 						swipeleft: function (swipeEvent) {
 							if (app.config.enable.hand === true) {
-								app.$sunInformations.dialog('close');
+								//app.$sunInformations.dialog('close');
+								app.currentCar--;
+								if (app.currentCar < 0) {
+									app.currentCar = app.cars.length - 1;
+								}
+								app.$car.attr('src', app.cars[app.currentCar].attr('src'));
 							}
 						},
 						swiperight: function (swipeEvent) {
 							if (app.config.enable.hand === true) {
-								app.$sunInformations.dialog('close');
+								//app.$sunInformations.dialog('close');
+								app.currentCar++;
+								if (app.currentCar >= app.cars.length) {
+									app.currentCar = 0;
+								}
+								app.$car.attr('src', app.cars[app.currentCar].attr('src'));
 							}
 						},
 						swiperelease: function (swipeEvent) {
@@ -182,7 +228,8 @@ jQuery(document).on('ready', function () {
 					'wave': {
 						wave: function (waveEvent) {
 							if (app.config.enable.hand === true) {
-								window.location.reload();
+								app.currentCar = Math.floor(Math.random() * app.cars.length);
+								app.$car.attr('src', app.cars[app.currentCar].attr('src'));
 							}
 						}
 					}
@@ -266,8 +313,6 @@ jQuery(document).on('ready', function () {
 				this.hideZigfuLink();
 
 				this.engager.addEventListener('userdisengaged', function(user) {
-					console.log(user);
-
 					app.detectors.push.removeEventListener('push', app.events.push.onpush);
 					app.detectors.push.removeEventListener('release', app.events.push.onrelease);
 					app.detectors.push.removeEventListener('click', app.events.push.onclick);
@@ -360,15 +405,17 @@ jQuery(document).on('ready', function () {
 			body: $('body'),
 			viewport: $('#kinect-parallax'),
 			enable: {
-				parallax: false,
-				hand: false
+				parallax: true,
+				hand: true
 			}
 		});
+		/*
 		App.$sunLayer.on('hover', function (e) {
 			App.$sunInformations.dialog('open');
 			App.hideZigfuLink();
 			App.play('plop');
 		});
+		*/
 
 		// Bird animation
 		/*
