@@ -360,7 +360,7 @@ jQuery(document).on('ready', function () {
 			body: $('body'),
 			viewport: $('#kinect-parallax'),
 			enable: {
-				parallax: true,
+				parallax: false,
 				hand: false
 			}
 		});
