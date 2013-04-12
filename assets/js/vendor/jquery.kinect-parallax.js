@@ -118,10 +118,10 @@ if(!Array.isArray) {
 						diffTop = parseInt(options.viewport.outerHeight()) - layerHeight,
 						diffLeft = parseInt(options.viewport.outerWidth()) - layerWidth,
 						initialPosition = $node.position(),
-						minLeft = Math.min(diffLeft, 0) + initialPosition.left,
-						maxLeft = Math.max(diffLeft, 0) + initialPosition.left,
-						minTop = Math.min(diffTop, 0) + initialPosition.top,
-						maxTop = Math.max(diffTop, 0) + initialPosition.top,
+						minLeft = Math.min(diffLeft, 0),
+						maxLeft = Math.max(diffLeft, 0),
+						minTop = Math.min(diffTop, 0),
+						maxTop = Math.max(diffTop, 0),
 						axisZ = parseInt($node.css('z-index')) / options.axisZ;
 
 					$node.data('KinectParallax', {
