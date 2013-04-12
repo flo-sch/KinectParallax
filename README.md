@@ -30,6 +30,11 @@ define your viewport and layers elements in your HTML template, then just includ
 Your layers need to be horizontaly and verticaly centered, or your parallax effect will not make sense.
 They need to have a pixels-fixed width and height too.
 Then you can position the image of these layers as you want, by instance in any absolute position !
+
+###### z-index
+The depth of your layer is managed by their z-index CSS property, related to the 'axisZ' plugin option value.
+A layer with a z-index initied to 1 will stay in the background, and a layer with a z-index equal to this 'axisZ' value will be the "closest".
+Feel free to change the z-index to make your layers move faster, or slower.
     
     <!DOCTYPE html>
         <head>
@@ -58,7 +63,7 @@ Then you can position the image of these layers as you want, by instance in any 
                 </div>
             </section>
             <script src='http://code.jquery.com/jquery-latest.min.js'></script>
-      	    <script>window.jQuery || document.write('<script src=\'assets/js/vendor/jquery-1.9.1.min.js\'><\/script>')</script>
+              <script>window.jQuery || document.write('<script src=\'assets/js/vendor/jquery-1.9.1.min.js\'><\/script>')</script>
             <script src='assets/js/vendor/jquery.kinect-parallax.js'></script>
       	    <script src='assets/js/vendor/zigfu.min.js'></script>
             <script>
