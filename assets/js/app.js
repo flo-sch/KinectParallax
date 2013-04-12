@@ -168,15 +168,15 @@ jQuery(document).on('ready', function () {
 										app.currentCar = app.cars.length - 1;
 									}
 									var $oldCar = app.$car,
-										currentLeft = parseInt($oldCar.attr('data-offset-left')),
 										$parentLayer = $oldCar.parent(),
+										currentLeft = parseInt($oldCar.attr('data-offset-left')),
 										moveOldCarTo = currentLeft - (($parentLayer.width() - app.$viewport.width()) / 2) - $oldCar.width(),
 										$newCar = $('<img/>', {
 											'id': 'car',
 											'data-offset-left': currentLeft,
 											'src': app.cars[app.currentCar]
 										}).on('load', function () {
-											if ($.support.cssProperty('transform')) {
+											if (Modernizr.csstransitions && Modernizr.csstransforms3d) {
 												$newCar.css({
 													'position': 'absolute',
 													'-webkit-transform': 'translate(' + (app.$viewport.width() + $oldCar.width() + parseInt($oldCar.attr('data-offset-left'))) + 'px, 0px) translateZ(0)',
@@ -230,16 +230,16 @@ jQuery(document).on('ready', function () {
 									if (app.currentCar >= app.cars.length) {
 										app.currentCar = 0;
 									}
-									var $oldCar = app.$car, 
-										currentLeft = parseInt($oldCar.attr('data-offset-left')),
+									var $oldCar = app.$car,
 										$parentLayer = $oldCar.parent(),
+										currentLeft = parseInt($oldCar.attr('data-offset-left')),
 										moveOldCarTo = app.$viewport.width() + $oldCar.width() + currentLeft,
 										$newCar = $('<img/>', {
 											'id': 'car',
 											'data-offset-left': currentLeft,
 											'src': app.cars[app.currentCar]
 										}).on('load', function () {
-											if ($.support.cssProperty('transform')) {
+											if (Modernizr.csstransitions && Modernizr.csstransforms3d) {
 												console.log();
 												$newCar.css({
 													'position': 'absolute',

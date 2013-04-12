@@ -13,7 +13,7 @@
 		<meta name='viewport' content='width=device-width'>
 		<link rel='stylesheet' href='assets/css/normalize.css'>
 		<link rel='stylesheet' href='assets/css/jquery-ui-1.10.2.cupertino.min.css'>
-		<link rel='stylesheet' href='assets/css/jquery.kinect-parallax-1.0.0.min.css'>
+		<link rel='stylesheet' href='assets/css/jquery.kinect-parallax.min.css'>
 		<link rel='stylesheet' href='assets/css/app.min.css'>
 		<script src='assets/js/vendor/modernizr-2.6.2.min.js'></script>
 	</head>
@@ -101,7 +101,6 @@
 						};
 
 					$(this).on('headstart', function (e, position) {
-						$layers.KinectParallax('start', position);
 						if (Array.isArray(position)) {
 							initialPosition = {
 								'x': position[0],
@@ -115,6 +114,7 @@
 								'z': position.z
 							}
 						}
+						$layers.KinectParallax('start', initialPosition);
 					});
 					$(this).on('headstop', function (e) {
 						$layers.KinectParallax('stop');

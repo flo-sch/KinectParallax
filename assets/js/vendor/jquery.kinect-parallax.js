@@ -84,7 +84,7 @@ if(!Array.isArray) {
 							'y': Math.min(Math.max(y, $data.movement.minTop), $data.movement.maxTop),
 							'z': Math.min(Math.max(z, $data.movement.minScale), $data.movement.maxScale)
 						};
-						if ($.support.cssProperty('transform')) {
+						if (Modernizr.csstransitions && Modernizr.csstransforms3d) {
 							css = {
 								'left': 'auto',
 								'top': 'auto',
