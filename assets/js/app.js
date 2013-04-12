@@ -24,7 +24,8 @@ jQuery(document).on('ready', function () {
 								'z': this.position.z
 							});
 						}
-					}
+					},
+					carAnimationSpeed: 250
 				};
 				this.config = $.extend({}, this.defaults, config);
 				this.init();
@@ -41,56 +42,25 @@ jQuery(document).on('ready', function () {
 				this.$viewport = this.config.viewport;
 				this.$body = this.config.body;
 				this.$user = $('#app-user');
-				/*
-				this.$sunLayer = $('#kinect-parallax-layer-4');
-				this.$sunInformations = $('#sun-informations').dialog({
-					autoOpen: false,
-					dialogClass: 'popin',
-					width: 500
-				});
-				*/
 				this.$car = $('#car');
 				this.cars = [
-					$('<img/>', {
-						'src': 'assets/images/layers/layer-2bis.png'
-					}),
-					$('<img/>', {
-						'src': 'assets/images/layers/layer-2bis-c1.png'
-					}),
-					$('<img/>', {
-						'src': 'assets/images/layers/layer-2bis-c2.png'
-					}),
-					$('<img/>', {
-						'src': 'assets/images/layers/layer-2bis-c3.png'
-					}),
-					$('<img/>', {
-						'src': 'assets/images/layers/layer-2bis-c4.png'
-					}),
-					$('<img/>', {
-						'src': 'assets/images/layers/layer-2bis-c5.png'
-					}),
-					$('<img/>', {
-						'src': 'assets/images/layers/layer-2bis-c6.png'
-					}),
-					$('<img/>', {
-						'src': 'assets/images/layers/layer-2bis-c7.png'
-					})
+					'assets/images/layers/layer-2bis.png',
+					'assets/images/layers/layer-2bis-c1.png',
+					'assets/images/layers/layer-2bis-c2.png',
+					'assets/images/layers/layer-2bis-c3.png',
+					'assets/images/layers/layer-2bis-c4.png',
+					'assets/images/layers/layer-2bis-c5.png',
+					'assets/images/layers/layer-2bis-c6.png',
+					'assets/images/layers/layer-2bis-c7.png'
 				];
 				this.currentCar = 0;
+				this.lockSwipe = false;
 				this.handSession = {
 					'$el': $('#cursor'),
 					'cursor': zig.controls.Cursor()
 				}
 				this.cursorAreaWidth = this.$viewport.width() - this.handSession.$el.width();
 				this.cursorAreaHeight = this.$viewport.height() - this.handSession.$el.height();
-				/*
-				this.sunArea = new Polygon([
-					[0.45 * this.cursorAreaWidth, 0.05 * this.cursorAreaHeight],
-					[0.45 * this.cursorAreaWidth, 0.25 * this.cursorAreaHeight],
-					[0.55 * this.cursorAreaWidth, 0.25 * this.cursorAreaHeight],
-					[0.55 * this.cursorAreaWidth, 0.05 * this.cursorAreaHeight]
-				]);
-				*/
 				this.HoverTimer = (function () {
 					function Timer(delay, callback) {
 						this.timeout = null;
@@ -139,27 +109,11 @@ jQuery(document).on('ready', function () {
 						onsessionstart: function (e) {
 							if (app.config.enable.hand === true) {
 								app.handSession.$el.show();
-								/*
-								var hoverTimer = new app.HoverTimer(1.5, function () {
-									app.$sunLayer.trigger('hover');
-								});
-								*/
 								app.handSession.cursor.addEventListener('move', function (cursor) {
 									app.handSession.$el.css({
 										'left': cursor.x * app.cursorAreaWidth,
 										'top': cursor.y * app.cursorAreaHeight
 									});
-									// Bind hover on custom Area
-									/*
-									var point = new Point(cursor.x * app.cursorAreaWidth, cursor.y * app.cursorAreaHeight);
-									if (app.sunArea.contains(point)) {
-										hoverTimer.launch();
-										app.handSession.$el.addClass('hover');
-									} else {
-										hoverTimer.cancel();
-										app.handSession.$el.removeClass('hover');
-									}
-									*/
 								});
 							}
 						},
@@ -204,21 +158,128 @@ jQuery(document).on('ready', function () {
 						swipeleft: function (swipeEvent) {
 							if (app.config.enable.hand === true) {
 								//app.$sunInformations.dialog('close');
-								app.currentCar--;
-								if (app.currentCar < 0) {
-									app.currentCar = app.cars.length - 1;
+								if (app.lockSwipe === false) {
+									app.lockSwipe = true;
+									setTimeout(function () {
+										app.unlockSwipe();
+									}, app.config.carAnimationSpeed * 4);
+									app.currentCar--;
+									if (app.currentCar < 0) {
+										app.currentCar = app.cars.length - 1;
+									}
+									var $oldCar = app.$car,
+										currentLeft = parseInt($oldCar.attr('data-offset-left')),
+										$parentLayer = $oldCar.parent(),
+										moveOldCarTo = currentLeft - (($parentLayer.width() - app.$viewport.width()) / 2) - $oldCar.width(),
+										$newCar = $('<img/>', {
+											'id': 'car',
+											'data-offset-left': currentLeft,
+											'src': app.cars[app.currentCar]
+										}).on('load', function () {
+											if ($.support.cssProperty('transform')) {
+												$newCar.css({
+													'position': 'absolute',
+													'-webkit-transform': 'translate(' + (app.$viewport.width() + $oldCar.width() + parseInt($oldCar.attr('data-offset-left'))) + 'px, 0px) translateZ(0)',
+													'-moz-transform': 'translate(' + (app.$viewport.width() + $oldCar.width() + parseInt($oldCar.attr('data-offset-left'))) + 'px, 0px) translateZ(0)',
+													'-ms-transform': 'translate(' + (app.$viewport.width() + $oldCar.width() + parseInt($oldCar.attr('data-offset-left'))) + 'px, 0px) translateZ(0)',
+													'-o-transform': 'translate(' + (app.$viewport.width() + $oldCar.width() + parseInt($oldCar.attr('data-offset-left'))) + 'px, 0px) translateZ(0)',
+													'transform': 'translate(' + (app.$viewport.width() + $oldCar.width() + parseInt($oldCar.attr('data-offset-left'))) + 'px, 0px) translateZ(0)'
+												});
+												$oldCar.transition({
+													x: moveOldCarTo,
+													y: 0
+												}, app.config.carAnimationSpeed, 'ease', function () {
+													$oldCar.remove();
+													$newCar.appendTo($parentLayer).transition({
+														x: currentLeft,
+														y: 0
+													}, app.config.carAnimationSpeed, 'ease', function () {
+														app.$car = $newCar;
+													});
+												});
+											} else {
+												$newCar.css({
+													'position': 'absolute',
+													'left': app.$viewport.width() + $oldCar.width() + parseInt($oldCar.attr('data-offset-left'))
+												});
+												$oldCar.animate({
+													'left': moveOldCarTo
+												}, app.config.carAnimationSpeed, 'swing', function () {
+													$oldCar.remove();
+													$newCar.appendTo($parentLayer).animate({
+														'left': currentLeft
+													}, app.config.carAnimationSpeed, 'swing', function () {
+														app.$car = $newCar;
+													});
+												});
+
+											}
+										});
 								}
-								app.$car.attr('src', app.cars[app.currentCar].attr('src'));
 							}
 						},
 						swiperight: function (swipeEvent) {
 							if (app.config.enable.hand === true) {
 								//app.$sunInformations.dialog('close');
-								app.currentCar++;
-								if (app.currentCar >= app.cars.length) {
-									app.currentCar = 0;
+								if (app.lockSwipe === false) {
+									app.lockSwipe = true;
+									setTimeout(function () {
+										app.unlockSwipe();
+									}, app.config.carAnimationSpeed * 4);
+									app.currentCar++;
+									if (app.currentCar >= app.cars.length) {
+										app.currentCar = 0;
+									}
+									var $oldCar = app.$car, 
+										currentLeft = parseInt($oldCar.attr('data-offset-left')),
+										$parentLayer = $oldCar.parent(),
+										moveOldCarTo = app.$viewport.width() + $oldCar.width() + currentLeft,
+										$newCar = $('<img/>', {
+											'id': 'car',
+											'data-offset-left': currentLeft,
+											'src': app.cars[app.currentCar]
+										}).on('load', function () {
+											if ($.support.cssProperty('transform')) {
+												console.log();
+												$newCar.css({
+													'position': 'absolute',
+													'left': 'auto',
+													'-webkit-transform': 'translate(' + (parseInt($oldCar.attr('data-offset-left')) - (($parentLayer.width() - app.$viewport.width()) / 2) - $oldCar.width()) + 'px, 0px) translateZ(0)',
+													'-moz-transform': 'translate(' + (parseInt($oldCar.attr('data-offset-left')) - (($parentLayer.width() - app.$viewport.width()) / 2) - $oldCar.width()) + 'px, 0px) translateZ(0)',
+													'-ms-transform': 'translate(' + (parseInt($oldCar.attr('data-offset-left')) - (($parentLayer.width() - app.$viewport.width()) / 2) - $oldCar.width()) + 'px, 0px) translateZ(0)',
+													'-o-transform': 'translate(' + (parseInt($oldCar.attr('data-offset-left')) - (($parentLayer.width() - app.$viewport.width()) / 2) - $oldCar.width()) + 'px, 0px) translateZ(0)',
+													'transform': 'translate(' + (parseInt($oldCar.attr('data-offset-left')) - (($parentLayer.width() - app.$viewport.width()) / 2) - $oldCar.width()) + 'px, 0px) translateZ(0)'
+												});
+												$oldCar.transition({
+													x: moveOldCarTo,
+													y: 0
+												}, app.config.carAnimationSpeed, 'ease', function () {
+													$oldCar.remove();
+													$newCar.appendTo($parentLayer).transition({
+														x: currentLeft,
+														y: 0
+													}, app.config.carAnimationSpeed, 'ease', function () {
+														app.$car = $newCar;
+													});
+												});
+											} else {
+												$newCar.css({
+													'position': 'absolute',
+													'left': parseInt($oldCar.attr('data-offset-left')) - (($parentLayer.width() - app.$viewport.width()) / 2) - $oldCar.width()
+												});
+												$oldCar.animate({
+													'left': moveOldCarTo
+												}, app.config.carAnimationSpeed, 'swing', function () {
+													$oldCar.remove();
+													$newCar.appendTo($parentLayer).animate({
+														'left': currentLeft
+													}, app.config.carAnimationSpeed, 'swing', function () {
+														app.$car = $newCar;
+													});
+												});
+											}
+										});
 								}
-								app.$car.attr('src', app.cars[app.currentCar].attr('src'));
 							}
 						},
 						swiperelease: function (swipeEvent) {
@@ -228,8 +289,14 @@ jQuery(document).on('ready', function () {
 					'wave': {
 						wave: function (waveEvent) {
 							if (app.config.enable.hand === true) {
+								/*
 								app.currentCar = Math.floor(Math.random() * app.cars.length);
-								app.$car.attr('src', app.cars[app.currentCar].attr('src'));
+								var $newCar = $('<img/>', {
+									'src': app.cars[app.currentCar]
+								}).on('load', function () {
+									app.$car.attr('src', $newCar.attr('src'));
+								});
+*/
 							}
 						}
 					}
@@ -269,7 +336,7 @@ jQuery(document).on('ready', function () {
 					app.$user.append(
 						$('<p/>').text('Hey you! Try to move your head in order to watch the layers move!')
 					).append(
-						$('<p/>').text('Then put up your hand in front of the camera, and move the cursor on hover the sun for 1,5s!')
+						$('<p/>').text('Then put up your hand in front of the camera, and swipe / wave to change the color of the volvo car!')
 					);
 
 					app.detectors.handSession = zig.HandSessionDetector();
@@ -350,6 +417,9 @@ jQuery(document).on('ready', function () {
 			toggleHandGestures: function () {
 				this.config.enable.hand = !this.config.enable.hand;
 			},
+			unlockSwipe: function () {
+				this.lockSwipe = false;
+			},
 			displayLoader: function () {
 				$('body').append($('<div/>', {
 					'class': 'overlay'
@@ -409,13 +479,6 @@ jQuery(document).on('ready', function () {
 				hand: true
 			}
 		});
-		/*
-		App.$sunLayer.on('hover', function (e) {
-			App.$sunInformations.dialog('open');
-			App.hideZigfuLink();
-			App.play('plop');
-		});
-		*/
 
 		// Bird animation
 		/*
