@@ -10,6 +10,10 @@ jQuery(document).on('ready', function () {
 						'parallax': true,
 						'hand': true
 					},
+					'stats': {
+						'url': null,
+						'secret': null
+					},
 					onUserMove: function(user) {
 						if (this.config.enable.parallax === true) {
 							this.position.x = user.skeleton[zig.Joint.Head].position[0];
@@ -59,7 +63,7 @@ jQuery(document).on('ready', function () {
 				this.handSession = {
 					'$el': $('#cursor'),
 					'cursor': zig.controls.Cursor()
-				}
+				};
 				this.cursorAreaWidth = this.$viewport.width() - this.handSession.$el.width();
 				this.cursorAreaHeight = this.$viewport.height() - this.handSession.$el.height();
 				this.HoverTimer = (function () {
@@ -196,6 +200,7 @@ jQuery(document).on('ready', function () {
 														y: 0
 													}, app.config.carAnimationSpeed, 'ease', function () {
 														app.$car = $newCar;
+														app.stats.swipes++;
 													});
 												});
 											} else {
@@ -211,6 +216,7 @@ jQuery(document).on('ready', function () {
 														'left': currentLeft
 													}, app.config.carAnimationSpeed, 'swing', function () {
 														app.$car = $newCar;
+														app.stats.swipes++;
 													});
 												});
 
@@ -260,6 +266,7 @@ jQuery(document).on('ready', function () {
 														y: 0
 													}, app.config.carAnimationSpeed, 'ease', function () {
 														app.$car = $newCar;
+														app.stats.swipes++;
 													});
 												});
 											} else {
@@ -275,6 +282,7 @@ jQuery(document).on('ready', function () {
 														'left': currentLeft
 													}, app.config.carAnimationSpeed, 'swing', function () {
 														app.$car = $newCar;
+														app.stats.swipes++;
 													});
 												});
 											}
@@ -331,6 +339,7 @@ jQuery(document).on('ready', function () {
 				if (this.config.debug === false) {
 					this.$debug.remove();
 				}
+				this.stats = {};
 				this.initZigfu();
 			},
 			initZigfu: function () {
@@ -342,6 +351,8 @@ jQuery(document).on('ready', function () {
 					).append(
 						$('<p/>').text('Then put up your hand in front of the camera, and swipe / wave to change the color of the volvo car!')
 					);
+
+					app.resetStatistics(user);
 
 					app.detectors.handSession = zig.HandSessionDetector();
 					app.detectors.handSession.addListener(app.events.hand);
@@ -383,7 +394,9 @@ jQuery(document).on('ready', function () {
 				});
 				this.hideZigfuLink();
 
-				this.engager.addEventListener('userdisengaged', function(user) {
+				this.engager.addEventListener('userdisengaged', function (user) {
+					app.sendStatistics(user);
+
 					app.detectors.push.removeEventListener('push', app.events.push.onpush);
 					app.detectors.push.removeEventListener('release', app.events.push.onrelease);
 					app.detectors.push.removeEventListener('click', app.events.push.onclick);
@@ -414,6 +427,42 @@ jQuery(document).on('ready', function () {
 				});
 
 				zig.addListener(this.engager);
+			},
+			resetStatistics: function (user) {
+				this.stats = {
+					'userId': user.id,
+					'starttime': new Date(),
+					'endtime': null,
+					'swipes': 0
+				};
+			},
+			sendStatistics: function (user) {
+				if (user.id === this.stats.userId) {
+					this.stats.endtime = new Date();
+
+					if ((this.stats.endtime - this.stats.starttime) > 0) {
+						console.log('Sending stats...', this.stats);
+
+						/*
+						$.ajax({
+							'url': this.config.stats.url,
+							'type': 'post',
+							'data': this.stats,
+							'dataType': 'json',
+							'cache': false,
+							'async': true
+						}).done(function (response) {
+							console.log('SUCCESS', response);
+						}).fail(function (response) {
+							console.log('FAILURE', response);
+						});
+						*/
+					} else {
+						console.log('Ignored session of less than 1 second');
+					}
+				} else {
+					console.log('Unengaged user...');
+				}
 			},
 			toggleParallax: function () {
 				this.config.enable.parallax = !this.config.enable.parallax;
@@ -478,6 +527,9 @@ jQuery(document).on('ready', function () {
 			enable: {
 				parallax: true,
 				hand: true
+			},
+			stats: {
+				url: 'http://kinect-parallax.florentschildknecht.com/stats'
 			}
 		});
 
