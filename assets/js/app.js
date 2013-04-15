@@ -36,6 +36,7 @@ jQuery(document).on('ready', function () {
 				var app = this;
 				this.$doc = $(document);
 				this.$win = $(window);
+				this.$debug = $('#debug');
 				this.$headX = $('#head-x');
 				this.$headY = $('#head-y');
 				this.$headZ = $('#head-z');
@@ -240,7 +241,6 @@ jQuery(document).on('ready', function () {
 											'src': app.cars[app.currentCar]
 										}).on('load', function () {
 											if (Modernizr.csstransitions && Modernizr.csstransforms3d) {
-												console.log();
 												$newCar.css({
 													'position': 'absolute',
 													'left': 'auto',
@@ -327,6 +327,10 @@ jQuery(document).on('ready', function () {
 					'y': 0,
 					'z': 0
 				};
+				// Debug table
+				if (this.config.debug === false) {
+					this.$debug.remove();
+				}
 				this.initZigfu();
 			},
 			initZigfu: function () {
@@ -465,13 +469,10 @@ jQuery(document).on('ready', function () {
 				if (sound in this.sounds) {
 					this.sounds[sound].play();
 				}
-			},
-			supportsCSSTransform: function () {
-
 			}
 		};
 		App = new Application({
-			debug: true,
+			debug: false,
 			body: $('body'),
 			viewport: $('#kinect-parallax'),
 			enable: {
