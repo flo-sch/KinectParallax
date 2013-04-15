@@ -200,7 +200,9 @@ jQuery(document).on('ready', function () {
 														y: 0
 													}, app.config.carAnimationSpeed, 'ease', function () {
 														app.$car = $newCar;
-														app.stats.swipes++;
+														app.stats.swipes.push({
+															datetime: new Date()
+														})
 													});
 												});
 											} else {
@@ -216,7 +218,9 @@ jQuery(document).on('ready', function () {
 														'left': currentLeft
 													}, app.config.carAnimationSpeed, 'swing', function () {
 														app.$car = $newCar;
-														app.stats.swipes++;
+														app.stats.swipes.push({
+															datetime: new Date()
+														})
 													});
 												});
 
@@ -266,7 +270,9 @@ jQuery(document).on('ready', function () {
 														y: 0
 													}, app.config.carAnimationSpeed, 'ease', function () {
 														app.$car = $newCar;
-														app.stats.swipes++;
+														app.stats.swipes.push({
+															datetime: new Date()
+														})
 													});
 												});
 											} else {
@@ -282,7 +288,9 @@ jQuery(document).on('ready', function () {
 														'left': currentLeft
 													}, app.config.carAnimationSpeed, 'swing', function () {
 														app.$car = $newCar;
-														app.stats.swipes++;
+														app.stats.swipes.push({
+															datetime: new Date()
+														})
 													});
 												});
 											}
@@ -433,17 +441,14 @@ jQuery(document).on('ready', function () {
 					'userId': user.id,
 					'starttime': new Date(),
 					'endtime': null,
-					'swipes': 0
+					'swipes': []
 				};
 			},
 			sendStatistics: function (user) {
 				if (user.id === this.stats.userId) {
 					this.stats.endtime = new Date();
-
 					if ((this.stats.endtime - this.stats.starttime) > 0) {
 						console.log('Sending stats...', this.stats);
-
-						/*
 						$.ajax({
 							'url': this.config.stats.url,
 							'type': 'post',
@@ -452,11 +457,11 @@ jQuery(document).on('ready', function () {
 							'cache': false,
 							'async': true
 						}).done(function (response) {
-							console.log('SUCCESS', response);
+							console.log('Stats successfully saved', response);
 						}).fail(function (response) {
-							console.log('FAILURE', response);
+							console.log('Unable to save stats', response);
 						});
-						*/
+						this.stats = {};
 					} else {
 						console.log('Ignored session of less than 1 second');
 					}
@@ -529,7 +534,7 @@ jQuery(document).on('ready', function () {
 				hand: true
 			},
 			stats: {
-				url: 'http://kinect-parallax.florentschildknecht.com/stats'
+				url: 'http://kinect-parallax.florentschildknecht.com/rest/stats'
 			}
 		});
 
