@@ -452,7 +452,9 @@ jQuery(document).on('ready', function () {
 						$.ajax({
 							'url': this.config.stats.url,
 							'type': 'post',
-							'data': this.stats,
+							'data': {
+								'stats': this.stats
+							},
 							'dataType': 'json',
 							'cache': false,
 							'async': true
