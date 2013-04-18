@@ -49,14 +49,12 @@ jQuery(document).on('ready', function () {
 				this.$user = $('#app-user');
 				this.$car = $('#car');
 				this.cars = [
-					'assets/images/layers/layer-2bis.png',
-					'assets/images/layers/layer-2bis-c1.png',
-					'assets/images/layers/layer-2bis-c2.png',
-					'assets/images/layers/layer-2bis-c3.png',
-					'assets/images/layers/layer-2bis-c4.png',
-					'assets/images/layers/layer-2bis-c5.png',
-					'assets/images/layers/layer-2bis-c6.png',
-					'assets/images/layers/layer-2bis-c7.png'
+					'assets/images/layers/car1.png',
+					'assets/images/layers/car2.png',
+					'assets/images/layers/car3.png',
+					'assets/images/layers/car4.png',
+					'assets/images/layers/car5.png',
+					'assets/images/layers/car6.png'
 				];
 				this.currentCar = 0;
 				this.lockSwipe = false;
